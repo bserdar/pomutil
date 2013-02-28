@@ -1,0 +1,30 @@
+
+             POMUtils Installation
+
+POMUtils is written in Java. You'll need Java JDK 1.6 and Apache Maven
+(http://maven.apache.org/) to build it. Once you have the source, run
+
+   mvn install 
+
+from the source directory, and it will build everything you need. This
+will build the following packages:
+
+   target/pomutils-2.2.0-dist.tar.gz
+   target/rpm/pomutils/RPMS/noarch/pomutils-2.2.0-1.noarch.rpm
+
+You can either install the RPM package, or untar the tarball.
+
+Installing the RPM package:
+
+Run
+
+   rpm -i pomutils-2.2.0-dist.tar.gz
+
+It will install POMUtils under /usr/share/pomutils-2.2.0, and create a
+symlink under /usr/bin to the pomutils and xmlfrag binaries.
+
+Installing the tarball:
+
+Run
+
+   tar xfz pomutils-2.2.0-dist.tar.gz

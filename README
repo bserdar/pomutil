@@ -1,0 +1,37 @@
+This is how it works:
+
+
+Check version number sanity:
+
+  java -jar target/pomutils-1.0.0-app.jar <pomfile> -s
+
+This will cross check all version numbers in the source tree, and
+print out inconsistencies.
+
+
+
+Print all versions:
+
+  java -jar target/pomutils-1.0.0-app.jar <pomfile> -p
+
+
+
+Change the version of an artifact, and fix its direct dependencies:
+
+  java -jar target/pomutils-1.0.0-app.jar <pomfile> -vgroupId:artifact:version
+
+Sets the versoin number of groupId:artifact to version in all the poms
+it is referred.
+
+
+Change the versions of artifacts:
+
+  java -jar target/pomutils-1.0.0-app.jar <pomfile> -ffile
+
+Sets the version numbers of all artifacts in <file>
+
+
+So, print all versions, redirect the output to a text file. Then,
+edito the file to set the new version numbers, and feed it back using
+the -f switch.
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    targetNamespace="http://www.redhat.com/build/manifest/1"
+    xmlns:tns="http://www.redhat.com/build/manifest/1">
+
+  <xs:complexType name="ModuleMapType">
+      <xs:sequence>
+        <xs:complexType>
+           <xs:element name="module" type="tns:ModuleType" minOcccurs="1" maxOccurs="unbounded"/>
+        </xs<complexType>
+      </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ModuleType">
+      <xs:sequence>
+        <xs:complexType>
+           <xs:element name="name" type="xs:string" minOcccurs="1" maxOccurs="1"/>
+           <xs:element name="pom" type="xs:string" minOcccurs="1" maxOccurs="1"/>
+        </xs<complexType>
+      </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="BuildSetType">
+     <xs:complexType>
+        <xs:element name="module" minOccurs="1" maxOccurs="unbounded"/>
+     </xs:complexType>
+  </xs:complexType>
+
+  <xs:element name="manifest">
+    <xs:complexType>
+       <xs:sequence>
+         <xs:element name="modulemap" type="tns:ModuleMapType"
+                     minOccurs="0" maxOccurs="1"/>
+         <xs:element name="buildset" type="tns:BuildSetType"
+                     minOccurs="0" maxOccurs="1"/>
+       </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
