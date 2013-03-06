@@ -26,6 +26,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
+import javax.xml.xpath.XPathExpression;
+
 /**
  * @author Burak Serdar (bserdar@redhat.com)
  */
@@ -106,26 +108,24 @@ public class Main {
 
     private static boolean fixDependencies(Artifact a) throws Exception {
         boolean changed=false;
+        XPathExpression x=XML.xpf.newXPath().compile("/project/dependencies/dependency [artifactId='"+a.artifactId+"' and groupId='"+a.groupId+"']");
+
         for(POM pom:POM.allPOMs.values()) {
             // Go thru all dependencies and fix them
-            NodeList dependencies=pom.getDependencies();
+            NodeList dependencies=XML.getElements(pom.doc,x);
             int n=dependencies.getLength();
             for(int i=0;i<n;i++) {
                 Element el=(Element)dependencies.item(i);
-                String depArtifactId=XML.getElementText(el,XML.xp_rel_artifactId);
-                String depGroupId=XML.getElementText(el,XML.xp_rel_groupId);
-                if(a.groupId.equals(depGroupId)&&a.artifactId.equals(depArtifactId)) {
-                    Element depVersionEl=XML.getElement(el,XML.xp_rel_version);
-                    if(depVersionEl!=null) {
-                        String depVersion=depVersionEl.getTextContent();
-                        if(!depVersion.equals(a.version)) {
-                            depVersionEl.setTextContent(a.version);
-                            pom.setModified();
-                            changed=true;
-                        }
-                    } else
-                        System.out.println("Cannot set version in "+pom.getGroupId()+":"+pom.getArtifactId());
-                }
+                Element depVersionEl=XML.getElement(el,XML.xp_rel_version);
+                if(depVersionEl!=null) {
+                    String depVersion=depVersionEl.getTextContent();
+                    if(!depVersion.equals(a.version)) {
+                        depVersionEl.setTextContent(a.version);
+                        pom.setModified();
+                        changed=true;
+                    }
+                } else
+                    System.out.println("Cannot set version in "+pom.getGroupId()+":"+pom.getArtifactId());
             }
 
             // Update parent if necessary

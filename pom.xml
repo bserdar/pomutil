@@ -118,7 +118,7 @@
               <sources>
                  <softlinkSource>
                      <destination>pomutil</destination>
-                     <location>/usr/share/pomutils-${project.version}/rrpm</location>
+                     <location>/usr/share/pomutils-${project.version}/pomutil</location>
                  </softlinkSource>
                  <softlinkSource>
                      <destination>xmlfrag</destination>

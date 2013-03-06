@@ -43,7 +43,7 @@ import javax.xml.parsers.DocumentBuilder;
  */
 public class POM {
 
-    private final Document doc;
+    public final Document doc;
     private final File file;
     private final List<POM> children=new ArrayList<POM>();
     private boolean modified=false;
