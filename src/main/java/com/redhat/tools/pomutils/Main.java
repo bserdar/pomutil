@@ -210,6 +210,10 @@ public class Main {
                 else if(args[i].equals("-x")) {
                     cmd="-x";
                     pomNeeded=true;
+                } else if(args[i].startsWith("-xp")) {
+                    cmd="-xp";
+                    varg=args[i].substring(3);
+                    pomNeeded=true;
                 } else if(args[i].equals("-p")) {
                     cmd=args[i];
                     pomNeeded=true;
@@ -253,7 +257,13 @@ public class Main {
                 printVersions(root);
             else if(cmd.equals("-x"))
                 checkVersionSanity();
-            else if(cmd.equals("-v")) {
+            else if(cmd.equals("-xp")) {
+                XPathExpression x=XML.xpf.newXPath().compile(varg);
+                NodeList nl=XML.getElements(root.doc,x);
+                int n=nl.getLength();
+                for(int i=0;i<n;i++)
+                    System.out.println(nl.item(i).getTextContent());
+            } else if(cmd.equals("-v")) {
                 Artifact a=Artifact.parse(varg);
                 POM vc=POM.allPOMs.get(a.groupId+":"+a.artifactId);
                 if(vc!=null) {
@@ -310,6 +320,10 @@ public class Main {
     private static void printHelp() {
         System.out.println("This is how it works:\n"+
                            "\n"+
+                           "Run an XPath on a POM:\n"+
+                           "\n"+
+                           "  pomutil <pomfile> -xp<XPath>\n"+
+                           "\n"+
                            "Check version number sanity:\n"+
                            "\n"+
                            "  pomutil <pomfile> -x\n"+
@@ -330,7 +344,7 @@ public class Main {
                            "  pomutil <pomfile> -vgroupId:artifact:version\n"+
                            "\n"+
                            " Use -a flag to write all poms even if they're not changed\n"+
-                           "Sets the versoin number of groupId:artifact to version in all the poms\n"+
+                           "Sets the version number of groupId:artifact to version in all the poms\n"+
                            "it is referred.\n"+
                            "\n"+
                            "\n"+
@@ -342,7 +356,7 @@ public class Main {
                            "\n"+
                            "\n"+
                            "So, print all versions, redirect the output to a text file. Then,\n"+
-                           "edito the file to set the new version numbers, and feed it back using\n"+
+                           "edit the file to set the new version numbers, and feed it back using\n"+
                            "the -f switch.\n"+
                            "\n"+
                            "\n"+
