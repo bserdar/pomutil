@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>pomutil by bserdar</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Pomutil</h1>
+        <p>Deal with large Maven projects</p>
+
+        <p class="view"><a href="https://github.com/bserdar/pomutil">View the Project on GitHub <small>bserdar/pomutil</small></a></p>
+
+
+<a href="https://github.com/bserdar/pomutil/zipball/master">Source ZIP File</a><br/>
+<a href="https://github.com/bserdar/pomutil/tarball/master">Source TAR Ball</a><br/>
+<a href="pomutils-2.2.0-dist.tar.gz">Distribution TAR BALL</a><br/>
+<a href="pomutils-2.2.0-1.noarch.rpm">Distribution RPM</a>
+      </header>
+      <section>
+Pomutil helps deal with large Maven projects. For general usage, read
+the <a
+href="https://github.com/bserdar/pomutil/blob/master/README">README</a>
+file.
+
+<h3>Versioning Artifacts</h3> 
+
+Pomutil can be used to change the version numbers of some or all of
+the artifacts built in a project tree.
+
+<ol>
+<li>Print current versions of artifacts to a text file.<br/>
+<code>
+    pomutil pom.xml -p>versions
+</code>
+</li>
+<li>Edit the text file to reflect the new versions for artifacts.</li>
+<li>Set artifact version numbers<br/>
+<code>
+   pomutil pom.xml -fversions
+</code>
+</li>
+</ol>
+
+This will change the version numbers of the artifacts to that's given
+in the <code>versions</code> file, and also change the version numbers
+of the dependency declerations to those artifacts in other POM files.
+
+<!--h3>Building only what is necessary</h3>
+
+<h3>Including POM fragments instead of POM inheritance</h3-->
+
+
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/bserdar">bserdar</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
