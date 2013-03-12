@@ -187,3 +187,61 @@ will generate a pom.xml file, using skel.xml as a baseline, adding
 all the modules listed in the build manifest and the modules that are
 dependent on that build set.
       
+# XMLFrag
+
+Aggregator style Maven projects have some limitations. Most of the
+common project information is stored in the root pom, and child
+projects inherit from it. It is not possible to modularize such
+projects so that sligthly different configurations can be applied for
+certain targets. Inheriting from multiple root poms is not allowed, so
+sub projects end up overriding things setup in root pom.
+
+Instead of using a root pom, a large project structure can be divided
+into individual smaller projects, with fragments of POM files are
+stored in a different location. XMLFrag reconstructs POM files using
+such fragments.
+
+Move sections of POM files into fragments. For instance:
+
+Original POM file:
+<project>
+   ...
+   <dependencies>
+     <dependency>
+      ...
+     </dependency>
+   </dependencies>
+   ...
+
+
+Move dependencies to a fragment:
+
+fragments/dependencies.frag.xml:
+
+<fragment>
+   <dependency> 
+     ...
+   <dependency>
+</fragment>
+
+POM file:
+
+<project>
+   ...
+   <dependencies>
+   <!--Fragment: dependencies.frag.xml-->
+   </dependencies>
+   ...
+</project>
+
+Then, run XMLFrag:
+
+   xmlfrag -ffragments pom.xml
+
+This command inserts the contents of fragments/dependencies.frag.xml
+into the pom file. It also replaces the fragment comment with hash
+information, so that if the fragment is modified, the modifications
+are applied to the pom file correctly when xmlfrag is run again. If
+fragments inserted into the POM file using xmlfrag is manually
+modified, xmlfrag will warn when executed. -x switch forces
+replacement of the fragments in pom files.
