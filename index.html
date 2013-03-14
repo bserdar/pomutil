@@ -179,8 +179,67 @@ This command does the following:
 </ul>
 </p>
 
-<!--h3>Using POM fragments instead of POM inheritance</h3-->
+<h3>Using POM fragments instead of POM inheritance</h3>
 
+<p>Using fragments, Maven POM files can be broken into modules that
+can be included into other POM files. As an example, consider a
+project contining modules that use Jboss, RestEasy, and Spring, but
+not all modules use all three. These frameworks come with their own
+set of dependencies. You can prepare three XML files,
+<code>jboss.xml</code>, <code>rest.xml</code>, and
+<code>spring.xml</code> containing dependencies used by these
+frameworks. A module using only JBoss will include
+<code>jboss.xml</code>, another module using JBoss and RestEasy will
+include <code>jboss.xml</code> and <code>rest.xml</code>.</p>
+
+<p>Fragments are XML files of the following format:<br/>
+<pre>
+&lt;fragment&gt;
+    &lt;!-- Any valid XML content  --&gt;
+&lt;/fragment&gt;
+</pre></p>
+
+<p>For instance, <code>rest.xml</code> looks like this:<br/>
+<pre>
+&lt;fragment&gt;
+   &lt;dependency&gt;
+     &lt;groupId&gt;org.jboss.resteasy&lt;/groupId&gt;
+     &lt;artifactId&gt;resteasy-jaxrs&lt;/artifactId&gt;
+     &lt;version&gt;2.2.1.GA&lt;/version&gt;
+   &lt;/dependency&gt;
+   &lt;dependency&gt;
+     &lt;groupId&gt;com.sun.xml.bind&lt;/groupId&gt;
+     &lt;artifactId&gt;jaxb-impl&lt;/artifactId&gt;
+     &lt;version&gt;2.2.4&lt;/version&gt;
+     &lt;scope&gt;provided&lt;/scope&gt;
+   &lt;/dependency&gt;
+    ....
+&lt;/fragment&gt;
+</pre></p>
+<p>To include fragments in a POM file:<br/>
+<pre>
+&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;mygroup&lt;/groupId&gt;
+  &lt;artifactId&gt;myartifact&lt;/artifactId&gt;
+  &lt;packaging&gt;jar&lt;/packaging&gt;
+  &lt;version&gt;1.0&lt;/version&gt;
+  &lt;dependencies&gt;
+&lt;!--Fragment: rest.xml --&gt;
+&lt;!--Fragment: jboss.xml --&gt;
+  &lt;/dependencies&gt;
+  ...
+</pre>
+<p>The above project includes both the RestEasy and JBoss
+              dependencies.</p>
+<p>To generate or update the POM file, run<br/>
+<pre>
+    xmlfrag -ffragments/ pom.xml
+</pre>
+<p>Here, <code>-ffragment/</code> give the directory containing the
+XML fragments. When run, <code>xmlfrag</code> inserts the contents of
+the fragment XMLs into the POM file.</p> <p>If fragments are updated,
+running xmlfrag again will update the POM files with the new content.</p>
 
       </section>
       <footer>
