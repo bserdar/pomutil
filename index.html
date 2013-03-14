@@ -55,9 +55,131 @@ This will change the version numbers of the artifacts to that's given
 in the <code>versions</code> file, and also change the version numbers
 of the dependency declerations to those artifacts in other POM files.
 
-<!--h3>Building only what is necessary</h3>
+<h3>Building only what is necessary</h3>
 
-<h3>Including POM fragments instead of POM inheritance</h3-->
+<p>When working with a large project structure, building everything
+from the root is usually unnecessary. What is required is to build
+everything that will be release, and everything that depends on those,
+so that all the modifications to the artifacts are incorporated into
+affected modules. Pomutils can be used to setup such a build
+structure. For this, the following items need to be setup:
+<ul>
+<li>Root POM, if there is any, is converted to a skeleton POM file</li>
+<li>A mapping XML file defining each module and its root POM</li>
+<li>A release manifest, listing the modules that will be released.</li>
+</ul>
+</p>
+
+<h4>Skeleton POM</h4>
+<p>Suppose our project which has three modules has the following root POM:<br/>
+<pre>
+&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.redhat.project&lt;/groupId&gt;
+  &lt;artifactId&gt;root&lt;/artifactId&gt;
+  &lt;version&gt;1.0&lt;/version&gt;
+  &lt;dependencies&gt;
+    ...
+  &lt;/dependencies&gt;
+  &lt;dependencyManagement&gt;
+    ...
+  &lt;/dependencyManagement&gt;
+  &lt;modules&gt;
+    &lt;module&gt;m1&lt;/module&gt;
+    &lt;module&gt;m2&lt;/module&gt;
+    &lt;module&gt;m3&lt;/module&gt;
+  &lt;/modules&gt;
+&lt;/project&gt;
+</pre>
+</p>
+<p>We modify this POM file to a skeleton POM file. Pomutils will use
+        this skeleton POM file to generate a new root POM containing
+        only the modules that needs to be built. The skeleton POM file
+        contains the same items as the original POM file, except the
+        modules:<br/>
+skel.pom.xml:
+<pre>
+&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.redhat.project&lt;/groupId&gt;
+  &lt;artifactId&gt;root&lt;/artifactId&gt;
+  &lt;version&gt;1.0&lt;/version&gt;
+  &lt;dependencies&gt;
+    ...
+  &lt;/dependencies&gt;
+  &lt;dependencyManagement&gt;
+    ...
+  &lt;/dependencyManagement&gt;
+  &lt;modules&gt;
+  &lt;/modules&gt;
+&lt;/project&gt;
+</pre></p>
+
+<p>This skeleton file does not change from release to release.</p>
+
+<h4>Mapping file</h4>
+<p>The mapping XML file contains all the submodules, and their POM
+        file locations:<br>
+all.mf.xml:
+<pre>
+&lt;manifest xmlns="http://www.redhat.com/build/manifest/1"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+
+  &lt;modulemap&gt;
+     &lt;module&gt;
+        &lt;name&gt;m1&lt;/name&gt;
+        &lt;pom&gt;m1/pom.xml&lt;/pom&gt;
+     &lt;/module&gt;
+     &lt;module&gt;
+        &lt;name&gt;m2&lt;/name&gt;
+        &lt;pom&gt;m2/pom.xml&lt;/pom&gt;
+     &lt;/module&gt;
+     &lt;module&gt;
+        &lt;name&gt;m3&lt;/name&gt;
+        &lt;pom&gt;m3/pom.xml&lt;/pom&gt;
+     &lt;/module&gt;
+  &lt;/modulemap&gt;
+&lt;/manifest&gt;
+</pre></p>
+<p>Note that the modules in the original root POM is now listed
+        here.</p>
+<p>This mapping file does not change from release to release. It only
+        changes when new modules are added, or existing modules are
+        removed, or moved somewhere else.</p>
+
+<h4>Release Manifest</h4>
+<p>A release manifest is created for each release. It lists the
+        modules that will be included in the release.<br/>
+release.xml:
+<pre>
+&lt;manifest&gt;
+  &lt;buildset&gt;
+    &lt;module&gt;m1&lt;/module&gt;
+    &lt;module&gt;m3&lt;/module&gt;
+  &lt;/buildset&gt;
+&lt;/manifest&gt;
+</pre></p>
+
+<h4>Generating a root POM for a release</h4>
+<p>Run</br>
+<pre>
+    pomutil -rrelease.xml -omf.pom.xml -sskel.pom.xml -lall.mf.xml
+        -opom.xml
+</pre>
+This command does the following:
+<ul>
+<li>Determines which modules need to be built based on
+        <code>release.xml</code></li>
+<li>Determines if there are any other modules in
+        <code>all.mf.xml</code> that need to be built. Any module that
+        depends on the current build set needs to be rebuilt.</li>
+<li>Reads the <code>skel.pom.xml</code>, adds all the modules that
+        need to be built into the modules section, and writes it as
+        <code>pom.xml</code></li>
+</ul>
+</p>
+
+<!--h3>Using POM fragments instead of POM inheritance</h3-->
 
 
       </section>
