@@ -285,10 +285,9 @@ public class Main {
                         if(vc!=null) {
                             if(vc.setVersion(a.version))
                                 changed=true;
-                            if(fixDependencies(a))
-                                changed=true;
-                        } else
-                            throw new RuntimeException("Cannot find "+a);
+                        }
+                        if(fixDependencies(a))
+                            changed=true;
                     }
                 }
                 if(changed)
