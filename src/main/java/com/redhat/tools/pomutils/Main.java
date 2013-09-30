@@ -106,28 +106,37 @@ public class Main {
         return stdin.readLine();
     }
 
+    private static boolean fixDependencies(POM pom,Artifact a,NodeList dependencies) throws Exception {
+        int n=dependencies.getLength();
+        boolean changed=false;
+        for(int i=0;i<n;i++) {
+            Element el=(Element)dependencies.item(i);
+            Element depVersionEl=XML.getElement(el,XML.xp_rel_version);
+            if(depVersionEl!=null) {
+                String depVersion=depVersionEl.getTextContent();
+                if(!depVersion.equals(a.version)) {
+                    depVersionEl.setTextContent(a.version);
+                    pom.setModified();
+                    changed=true;
+                }
+            } else
+                System.out.println("Cannot set version in "+pom.getGroupId()+":"+pom.getArtifactId());
+        }
+        return changed;
+    }
+
     private static boolean fixDependencies(Artifact a) throws Exception {
         boolean changed=false;
         XPathExpression x=XML.xpf.newXPath().compile("/project/dependencies/dependency [artifactId='"+a.artifactId+"' and groupId='"+a.groupId+"']");
+        XPathExpression d=XML.xpf.newXPath().compile("/project/dependencyManagement/dependencies/dependency [artifactId='"+a.artifactId+"' and groupId='"+a.groupId+"']");
 
         for(POM pom:POM.allPOMs.values()) {
             // Go thru all dependencies and fix them
-            NodeList dependencies=XML.getElements(pom.doc,x);
-            int n=dependencies.getLength();
-            for(int i=0;i<n;i++) {
-                Element el=(Element)dependencies.item(i);
-                Element depVersionEl=XML.getElement(el,XML.xp_rel_version);
-                if(depVersionEl!=null) {
-                    String depVersion=depVersionEl.getTextContent();
-                    if(!depVersion.equals(a.version)) {
-                        depVersionEl.setTextContent(a.version);
-                        pom.setModified();
-                        changed=true;
-                    }
-                } else
-                    System.out.println("Cannot set version in "+pom.getGroupId()+":"+pom.getArtifactId());
-            }
-
+            if(fixDependencies(pom,a,XML.getElements(pom.doc,x)))
+                changed=true;
+            if(fixDependencies(pom,a,XML.getElements(pom.doc,d)))
+                changed=true;
+            
             // Update parent if necessary
             String parentGroupId=pom.getParentGroupId();
             String parentArtifactId=pom.getParentArtifactId();
