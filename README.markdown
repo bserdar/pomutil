@@ -13,14 +13,13 @@ Querying and Modifying POM files
 
 Prints the results of an XPath based on a POM file.
 
-   pomutil <pomfile> -xp<XPath>
+    pomutil <pomfile> -xp<XPath>
 
 Example:
 
 Print out the version of a project:
 
-   pomutil pom.xml -xp/project/version
-
+    pomutil pom.xml -xp/project/version
 
 ## Check version number sanity accross POM files
 
@@ -39,8 +38,7 @@ Prints out all artifact names and versions
 
 Each artifact is written in a separate line with the following format:
 
-groupId:artifactId=version
-
+    groupId:artifactId=version
 
 ## Change version number of an artifact in a POM tree
 
@@ -49,15 +47,14 @@ defined, and in all POM files where it is referenced.
 
     pomutil <pomfile> [-a] -vgroupId:artifactId:version
 
-Sets the version number of groupId:artifact to version. The -a
-switch rewrites all poms. Without -a, only modified poms are written.
+Sets the version number of `groupId:artifact` to `version`. The `-a`
+switch rewrites all poms. Without `-a`, only modified poms are written.
 
 ## Bulk change version
 
-
     pomutil <pomfile> -fFile
 
-where File is a text file that uses the same format as the -p (print
+where `File` is a text file that uses the same format as the `-p` (print
 all versions) option.
 
 You can print all versions of a project to a file, then edit that file
@@ -70,18 +67,18 @@ numbers in bulk:
 
 ## Find projects in a POM tree depending on an artifact
 
-   pomutil <pomfile> -dfgroupId:artifactId:version
+    pomutil <pomfile> -dfgroupId:artifactId:version
 
-Lists all the pom files in which groupId:artifactId:version appears as
-a direct dependency. version can be "*", meaning any matching
-groupId:artifactId will be listed.
+Lists all the pom files in which `groupId:artifactId:version` appears as
+a direct dependency. version can be "`*`", meaning any matching
+`groupId:artifactId` will be listed.
 
 ## Remove a direct dependency from a POM tree
 
     pomutil <pomfile> -drgroupId:artifactId:version
 
-Remove al occurances of groupId:artifactId:version from all projects
-in the tree. version can be "*".
+Remove al occurances of `groupId:artifactId:version` from all projects
+in the tree. version can be "`*`".
 
 
 # Partial Builds
@@ -98,92 +95,92 @@ in the build set.
 Consider an aggregator style root POM listing basic configuration and
 all the sub projects:
 
+`code/pom.xml`:
 
-code/pom.xml:
-<project>
-  ...
-   <modules>
-      <module>module1</module>
-      <module>module2</module>
-       ...
-      <module>moduleN</module>
-   </modules>
-  ...
-</project>
+    <project>
+      ...
+       <modules>
+          <module>module1</module>
+          <module>module2</module>
+           ...
+          <module>moduleN</module>
+       </modules>
+      ...
+    </project>
 
 
 Every build of this project requires that all the submodules
-module1,...,moduleN are also built. If our workset is limited to, say,
-only module1, it is not necessary to rebuild all submodules every
+`module1,...,moduleN` are also built. If our workset is limited to, say,
+only `module1`, it is not necessary to rebuild all submodules every
 time. What is required is that you build module1 to test/release your
-changes, and you build any module that depends on module1, so those
+changes, and you build any module that depends on `module1`, so those
 can be release as well now that they are using a newer version of
-module1. To do this, a build manifest is prepared:
+`module1`. To do this, a build manifest is prepared:
 
 
-myworkset.xml:
+`myworkset.xml`:
 
-<manifest>
-   <buildset>
-      <module>module1</module>
-   </buildset>
-</manifest>
+    <manifest>
+       <buildset>
+          <module>module1</module>
+       </buildset>
+    </manifest>
 
 
 We also need a definition of all the available modules:
 
 
-all.mf.xml:
+`all.mf.xml`:
 
-<manifest>
-   <modulemap>
-      <module>
-         <name>module1</name>
-         <pom>module1/pom.xml</pom>
-      </module>
-      <module>
-         <name>module2</name>
-         <pom>module2/pom.xml</pom>
-      </module>
-      ...
-      <module>
-         <name>moduleN</name>
-         <pom>moduleN/pom.xml</pom>
-      </module>
-   </modulemap>
-</manifest>
+    <manifest>
+       <modulemap>
+          <module>
+             <name>module1</name>
+             <pom>module1/pom.xml</pom>
+          </module>
+          <module>
+             <name>module2</name>
+             <pom>module2/pom.xml</pom>
+          </module>
+          ...
+          <module>
+             <name>moduleN</name>
+             <pom>moduleN/pom.xml</pom>
+          </module>
+       </modulemap>
+    </manifest>
 
 
 Last, we need to provide a skeleton POM file containing all the
 project related configuration we need at the root pom level:
 
-skel.xml:
+`skel.xml`:
 
-<project>
-   <modelVersion>4.0.0.</modelVersion>
-   <groupId>autogen</groupId>
-   <artifactId>root</artifactId>
-   <version>0</version>
-   <packaging>pom</packaging>
-   <name>autogen</name>
-   <dependencies>
-     ...
-   </dependencies>
-   <build>
-     ...
-   </build>
-   <modules>
-   </modules>
-</project>
+    <project>
+       <modelVersion>4.0.0.</modelVersion>
+       <groupId>autogen</groupId>
+       <artifactId>root</artifactId>
+       <version>0</version>
+       <packaging>pom</packaging>
+       <name>autogen</name>
+       <dependencies>
+         ...
+       </dependencies>
+       <build>
+         ...
+       </build>
+       <modules>
+       </modules>
+    </project>
 
 
 Note the empty modules element.
 
 Then, running
 
-   pomutil -rmyworkset.xml -lall.mf.xml -opom.xml -sskel.xml
+    pomutil -rmyworkset.xml -lall.mf.xml -opom.xml -sskel.xml
 
-will generate a pom.xml file, using skel.xml as a baseline, adding
+will generate a `pom.xml` file, using `skel.xml` as a baseline, adding
 all the modules listed in the build manifest and the modules that are
 dependent on that build set.
       
@@ -204,44 +201,45 @@ such fragments.
 Move sections of POM files into fragments. For instance:
 
 Original POM file:
-<project>
-   ...
-   <dependencies>
-     <dependency>
-      ...
-     </dependency>
-   </dependencies>
-   ...
+
+    <project>
+       ...
+       <dependencies>
+         <dependency>
+          ...
+         </dependency>
+       </dependencies>
+       ...
 
 
 Move dependencies to a fragment:
 
-fragments/dependencies.frag.xml:
+`fragments/dependencies.frag.xml`:
 
-<fragment>
-   <dependency> 
-     ...
-   <dependency>
-</fragment>
+    <fragment>
+       <dependency> 
+         ...
+       <dependency>
+    </fragment>
 
 POM file:
 
-<project>
-   ...
-   <dependencies>
-   <!--Fragment: dependencies.frag.xml-->
-   </dependencies>
-   ...
-</project>
+    <project>
+       ...
+       <dependencies>
+       <!--Fragment: dependencies.frag.xml-->
+       </dependencies>
+       ...
+    </project>
 
 Then, run XMLFrag:
 
-   xmlfrag -ffragments pom.xml
+    xmlfrag -ffragments pom.xml
 
-This command inserts the contents of fragments/dependencies.frag.xml
+This command inserts the contents of `fragments/dependencies.frag.xml`
 into the pom file. It also replaces the fragment comment with hash
 information, so that if the fragment is modified, the modifications
-are applied to the pom file correctly when xmlfrag is run again. If
-fragments inserted into the POM file using xmlfrag is manually
-modified, xmlfrag will warn when executed. -x switch forces
+are applied to the pom file correctly when `xmlfrag` is run again. If
+fragments inserted into the POM file using `xmlfrag` is manually
+modified, `xmlfrag` will warn when executed. `-x` switch forces
 replacement of the fragments in pom files.
