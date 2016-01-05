@@ -275,11 +275,15 @@ public class Main {
             } else if(cmd.equals("-v")) {
                 Artifact a=Artifact.parse(varg);
                 POM vc=POM.allPOMs.get(a.groupId+":"+a.artifactId);
+                boolean changed=false;
                 if(vc!=null) {
                     System.out.print("Setting the version of "+a.groupId+":"+a.artifactId+":"+vc.getVersion()+
                                      " to "+a.version);
-                    vc.setVersion(a.version);
+                    if(vc.setVersion(a.version))
+                        changed=true;
                     if(fixDependencies(a))
+                        changed=true;
+                    if(changed)
                         write(writeAll);
                 }
             } else if(cmd.equals("-f")) {
