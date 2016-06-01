@@ -19,4 +19,4 @@
 
 DIRNAME=`dirname "$(test -L "$0" && readlink "$0" || echo "$0")"`
 
-java -classpath $DIRNAME/pomutils-2.5.jar com.redhat.tools.pomutils.Main $*
+java -classpath $DIRNAME/pomutils-2.6.jar com.redhat.tools.pomutils.Main $*

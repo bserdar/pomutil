@@ -276,16 +276,16 @@ public class Main {
                 Artifact a=Artifact.parse(varg);
                 POM vc=POM.allPOMs.get(a.groupId+":"+a.artifactId);
                 boolean changed=false;
+                System.out.print("Setting the version of "+a.groupId+":"+a.artifactId+
+                                 " to "+a.version);
                 if(vc!=null) {
-                    System.out.print("Setting the version of "+a.groupId+":"+a.artifactId+":"+vc.getVersion()+
-                                     " to "+a.version);
                     if(vc.setVersion(a.version))
                         changed=true;
-                    if(fixDependencies(a))
-                        changed=true;
-                    if(changed)
-                        write(writeAll);
                 }
+                if(fixDependencies(a))
+                    changed=true;
+                if(changed)
+                    write(writeAll);
             } else if(cmd.equals("-f")) {
                 BufferedReader reader=new BufferedReader(new FileReader(varg));
                 String line;
